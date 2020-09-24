@@ -37,6 +37,7 @@ function makedeck() {
         deck.push(acard);
         bcard = new Card(cx, cy+cardheight+margin, cardwidth, cardheight, i);
         deck.push(bcard);
+        
         cx = cx + cardwidth + margin;
         acard.draw();
         bcard.draw();
@@ -115,7 +116,7 @@ function choose(ev) {
             }
         }
     }
-    if (i < deck.length) {
+    if(i < deck.length) {
         if(firstpick) {
             firstcard = i;
             firstpick = false;
@@ -130,7 +131,48 @@ function choose(ev) {
                 matched = true;
                 let nm = 1 + Number(document.f.count.value);
                 document.f.count.value = String(nm);
+                if(nm >= 0.5*deck.length) {
+                    let now = new Date();
+                    let nt = Number(now.getTime());
+                    let seconds = Math.floor(0.5 + (nt - starttime) / 1000);
+                    document.f.elapsed.value = String(seconds);
+                }
             }
+            else {
+                matched = false;
+            }
+            firstpick = true;
+            setTimeout(flipback, 1000);
         }
     }
+}
+
+function flipback() {
+    if(!matched) {
+        deck[firstcard].draw();
+        deck[secondcard].draw();
+    }
+    else {
+        ctx.fillStyle = tablecolor;
+        ctx.fillRect(deck[secondcard].sx, deck[secondcard].sy, deck[secondcard].swidth, deck[secondcard].sheight);
+        ctx.fillRect(deck[firstcard].sx, deck[firstcard].sy, deck[firstcard].swidth, deck[firstcard].sheight);
+        deck[secondcard].sx = -1;
+        deck[firstcard].sx = -1;
+    }
+}
+
+function init() {
+    //console.log("start init function");
+
+    ctx = document.getElementById('canvas').getContext('2d');
+    //console.log(ctx);
+
+    canvas1 = document.getElementById('canvas');
+    canvas1.addEventListener('click', choose, false);
+    makedeck();
+    document.f.count.value = 0;
+    document.f.elapsed.value = "";
+    starttime = new Date();
+    starttime = Number(starttime.getTime());
+    shuffle();
 }
