@@ -106,15 +106,14 @@ function choose(ev) {
     }
     
     let i;
+    let card
     for(i = 0; i < deck.length; i++) {
-        let card = deck[i];
-        if(card.sx >= 0) {
+         card = deck[i];
+        if(card.sx >= 0) 
             if((mx > card.sx) && (mx < card.sx+card.swidth) && (my > card.sy) && (my < card.sy + card.sheight)) {
-                if((firstpack) || (i != firstcard)) {
+                if((firstpick) || (i != firstcard))
                     break;
-                }
             }
-        }
     }
     if(i < deck.length) {
         if(firstpick) {
@@ -161,14 +160,25 @@ function flipback() {
     }
 }
 
-function init() {
-    //console.log("start init function");
+function restart() {
+    let xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+        if(this.readyState == 4 && this.status == 200) {
+            init();
+        }
+    };    
+    xhttp.open("POST", "file:///C:/wamp64/www/frontend-practice/HTML5-e-JS-usando-games/5-jogo-da-memoria/jogo-da-memoria.html");
+    xhttp.send();
+}
 
+function init() {    
     ctx = document.getElementById('canvas').getContext('2d');
-    //console.log(ctx);
 
-    canvas1 = document.getElementById('canvas');
+    const canvas1 = document.getElementById('canvas');
+    const btnRestart = document.getElementById('btn-restart');
     canvas1.addEventListener('click', choose, false);
+    btnRestart.addEventListener('click', restart, false);
+
     makedeck();
     document.f.count.value = 0;
     document.f.elapsed.value = "";
